@@ -92,7 +92,7 @@ fn main() {
                 move |data: &[i32], _: &cpal::InputCallbackInfo| {
                     let mut buffer = Vec::new();
                     for &sample in data {
-                        buffer.extend_from_slice(&sample.to_le_bytes()[..3]);
+                        buffer.extend_from_slice(&sample.to_le_bytes()[1..]);
                     }
                     let mut file = file.lock().unwrap();
                     file.write_all(&buffer).expect("Error writing to file");
