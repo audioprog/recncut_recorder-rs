@@ -1,0 +1,1 @@
+[![Rust](https://github.com/audioprog/recncut_recorder-rs/actions/workflows/rust.yml/badge.svg)](https://github.com/audioprog/recncut_recorder-rs/actions/workflows/rust.yml) ![GitHub Release](https://img.shields.io/github/v/release/audioprog/recncut_recorder-rs)
