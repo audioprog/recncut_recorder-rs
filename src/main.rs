@@ -23,7 +23,7 @@ enum Signal {
 }
 
 
-fn build_menu(selected: u32) -> Menu<Signal> {
+fn build_menu() -> Menu<Signal> {
     Menu::new([
         MenuItem::button("Quit", Signal::Quit)
     ])
@@ -39,7 +39,7 @@ fn main() {
         devices.sort_by_key(|device| device.name().unwrap_or_default());
         println!("List of audio input devices:");
         for (index, device) in devices.iter().enumerate() {
-            println!("{}: {}", index + 1, device.name().unwrap_or("Unknown".to_string()));
+            println!("{}={}", index + 1, device.name().unwrap_or("Unknown".to_string()));
         }
     } else if args.len() > 2 {
         let device_index: usize = args[1].parse().expect("Please provide a valid device number");
@@ -76,7 +76,11 @@ fn main() {
             },
         };
 
-        let file_name = args[2..].join(" ") + ".raw";
+        let file_name = if args[2..].join(" ").ends_with(".raw") {
+            args[2..].join(" ")
+        } else {
+            args[2..].join(" ") + ".raw"
+        };
         let file = Arc::new(Mutex::new(File::create(&file_name).expect("Error creating file")));
 
         println!("Writing audio data to file: {}", file_name);
@@ -105,8 +109,6 @@ fn main() {
 
         let event_loop = EventLoop::<Signal>::with_user_event()
         .build().expect("Error creating event loop");
-
-        let mut selected = 0;
         
         let tray = TrayIconBuilder::new()
             .with_icon({
@@ -115,7 +117,7 @@ fn main() {
                 Icon::from_rgba(rgba, width, height).expect("Error loading icon")
             })
             .with_tooltip(&format!("Recording: {}", file_name))
-            .with_menu(build_menu(selected))
+            .with_menu(build_menu())
             // with `winit` feature:
             .build({
                 let proxy = event_loop.create_proxy();
