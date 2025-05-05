@@ -65,9 +65,17 @@ fn main() {
             buffer_size: match config.buffer_size() {
                 cpal::SupportedBufferSize::Range { min, max } => {
                     println!("Buffer Size Range: min = {}, max = {}", min, max);
-                    let size = (*max).min(1024 * 4 * 1024);
-                    println!("Buffer Size: {}", size);
-                    cpal::BufferSize::Fixed(size)
+                    let size = (*max).min(1024 * 4 * 1024); // Reduce the maximum buffer size
+                    if size < *min {
+                        println!("Buffer size adjusted to minimum: {}", min);
+                        cpal::BufferSize::Fixed(*min)
+                    } else if size >= *max {
+                        println!("Buffer Size: Unknown");
+                        cpal::BufferSize::Default
+                    } else {
+                        println!("Buffer Size: {}", size);
+                        cpal::BufferSize::Fixed(size)
+                    }
                 }
                 cpal::SupportedBufferSize::Unknown => {
                     println!("Buffer Size: Unknown");
